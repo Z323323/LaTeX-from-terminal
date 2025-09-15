@@ -18,7 +18,7 @@ WARNING: Make sure you run ```generate_initial_project_tree_list.sh``` in an iso
 
 ANOTHER IMPORTANT NOTE: Since the second utility is completely independent, you CAN (and it's even better if you do it), modify the contents of ```initial_project_tree_list.txt``` as you want, creating the whitelist you want. We can say ```generate_initial_project_tree_list.sh``` is really useful to speed up the process initially. Below its content.
 
-**LAST (but not least) NOTE**: This script and every other script I developed (well that was mainly Gemini work but, you know, it can't take credits so...) **are meant to be used once you positioned yourself in the project directory**. Pleas don't forget this thing. This means you just need to write ```cd /???/your-project``` before running executables.
+**LAST (but not least) NOTE**: This script and every other script I developed (well that was mainly Gemini work but, you know, it can't take credits so...) **are meant to be used once you positioned yourself in the project directory**. Please don't forget this thing. This means you just need to write ```cd /???/your-project``` before running executables. Also the script below should always be the first you run, otherwise it will be quite useless.
 
 ```bash
 #!/bin/bash
@@ -93,8 +93,26 @@ echo ""
 echo "Cleaning completed! 🎉"
 ```
 
-Stay safe boys, ```Cleaning completed! 🎉``` can easily turn into ```System destroyed! 🎉```.
+Stay safe boys, ```Cleaning completed! 🎉``` can easily turn into ```System destroyed! 🎉```. By the way, you can store these two scripts wherever you want. In order to make a structured solution i put them two into ```~/???/my_utils/generics```. I suggest you to do the same.
 
-## 
+## Define the actual solution
+
+Well well, here we are. First things first: the solution is not hard, and this the good news, but it's better to include some context otherwise you won't understand this magics. Initially, the best thing to do is to edit the file ```.latexmkrc``` you created previously and put the content below inside.
+
+```
+$pdf_mode = 1;
+$recorder = 1;
+
+# Defines the absolute path to find pygmentize
+$ENV{PATH} = "/home/???/.local/bin:$ENV{PATH}";
+
+# Defines every path of PYTHONPATH to make pygmentize work
+$ENV{PYTHONPATH} = "/usr/lib/python3.10:/usr/lib/python3.10/lib-dynload:/home/???/.local/lib/python3.10/site-packages:/usr/local/lib/python3.10/dist-packages:/usr/lib/python3/dist-packages:$ENV{PYTHONPATH}";
+
+# Enables the execution of external scripts
+$pdflatex = 'pdflatex -synctex=1 -interaction=nonstopmode -shell-escape --shell-escape';
+```
+
+
 
 
