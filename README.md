@@ -8,4 +8,10 @@ If you read the last part of [https://github.com/Z323323/Spacemacs-for-LaTeX], y
 
 ## Setup your project directory
 
-This is always the best way to start. You can find
+This is always the best way to start. You can find a clear example at [https://github.com/Z323323/Spacemacs-for-LaTeX]. Now, instead of the ```.projectile``` file, you need to insert a ```.latexmkrc``` file. This works exactly as ```.bashrc``` or ```.zshrc``` but with the LaTeX engine, which is in the end the solution to the whole problem.
+
+## Define a couple utilities to speed up some stuff
+
+If you worked enough with LaTeX stuff from command line, you'll know everytime you compile your project, a lot of "auxiliary" files are generated, and are necessary to build the final document. Now, it's true that you need those files to generate the final ```pdf``` but it's also true that sometimes you need to clear up the whole directory and restart the build process (e.g. when you need to reformat index or bibliography, or both). I defined two utilities which could be useful in other contexts too, and called them ```generate_initial_project_tree_list.sh``` and ```restore_initial_project.sh```. Their functioning is very simple. The first one simply generate a white list of files and directories, and the second one clean all files and directories which are not part of the white list (you should use this one after you compiled you LaTeX project and want to rebuild from scratch).
+
+WARNING: Make sure you run ```generate_initial_project_tree_list.sh``` in an isolated environment, that is, the folder where you run it must ONLY contain your project. Actually this one is not that dangerous, but, for example, if you run it under ```/```, it will generate a file called ```initial_project_tree_list.txt``` containing the contents of your whole system (at least I guess so).
