@@ -8,7 +8,7 @@ If you read the last part of [https://github.com/Z323323/Spacemacs-for-LaTeX], y
 
 ## Setup your project directory
 
-This is always the best way to start. You can find a clear example at [https://github.com/Z323323/Spacemacs-for-LaTeX]. Now, instead of the ```.projectile``` file, you need to insert a ```.latexmkrc``` file. This works exactly as ```.bashrc``` or ```.zshrc``` but with the LaTeX engine, which is in the end the solution to the whole problem.
+This is always the best way to start. You can find a clear example at [https://github.com/Z323323/Spacemacs-for-LaTeX?tab=readme-ov-file#pre-create-a-good-directory-structure-for-your-latex-project]. Now, instead of the ```.projectile``` file, you need to insert a ```.latexmkrc``` file. This works exactly as ```.bashrc``` or ```.zshrc``` but with the LaTeX engine, which is in the end the solution to the whole problem.
 
 ## Define a couple utilities to speed up some stuff
 
