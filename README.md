@@ -18,10 +18,12 @@ WARNING: Make sure you run ```generate_initial_project_tree_list.sh``` in an iso
 
 ANOTHER IMPORTANT NOTE: Since the second utility is completely independent, you CAN (and it's even better if you do it), modify the contents of ```initial_project_tree_list.txt``` as you want, creating the whitelist you want. We can say ```generate_initial_project_tree_list.sh``` is really useful to speed up the process initially. Below its content.
 
+**LAST (but not least) NOTE**: This script and every other script I developed (well that was mainly Gemini work but, you know, it can't take credits so...) **are meant to be used once you positioned yourself in the project directory**. Pleas don't forget this thing. This means you just need to write ```cd /???/your-project``` before running executables.
+
 ```bash
 #!/bin/bash
 
-# Find every file and directory inside the project and saves them into a list.
+# Finds every file and directory inside the project and saves them into a list.
 # WARNING: This script is powerful, remember to use it into an isolated project.
 
 PROJECT_PATH="$PWD"
@@ -30,3 +32,69 @@ find "$PROJECT_PATH" -mindepth 1 -type f -o -type d > "$PROJECT_PATH/initial_pro
 
 echo "Complete list of all files and directories created in initial_project_tree_list.txt."
 ```
+
+Now, the second one is the one which is really **dangerous**.
+
+**WARNING** If you run this script inside the wrong folder, say ```/``` **you will delete your whole system** (except your whitelist :'''D, this would be quite funny ngl). If you run this script with the wrong ```initial_project_tree_list.txt``` **you will delete your whole project** (this one actually happened to me because I run the previous one in the wrong folder and then moved the file into another project). As I already told you this script deletes all the files which are not contained into the whitelist file. Code below.
+
+```bash
+#!/bin/bash
+
+PROJECT_PATH="$PWD"
+LIST_FILE="initial_project_tree_list.txt"
+
+# --- Initial security controls ---
+if [[ ! -f "$LIST_FILE" ]]; then
+    echo "Error: File '$LIST_FILE' not found."
+    echo "Ensure you generated initial_project_tree_list.txt using generate_initial_project_tree_list.sh."
+    exit 1
+fi
+
+# ====================================================================
+#  Phase 1: Read the list
+#  Put generated initial_project_tree_list.txt into an array (keep_files)
+# ====================================================================
+
+declare -a keep_files
+while IFS= read -r line; do
+    keep_files+=("$line")
+done < "$LIST_FILE"
+
+# ====================================================================
+#  Phase 2: Compare and clean
+#  Iterate every element of the current project, compare with initial_project_tree_list.txt and remove if it's not part of initial_project_tree_list.txt
+# ====================================================================
+
+# print0 put the '\0' delimiter at the end of each file or directory found, then read removes it
+find "$PROJECT_PATH" -mindepth 1 -print0 | while IFS= read -r -d $'\0' item; do
+    
+    # Ignore if item is initial_project_tree_list.txt
+    if [[ "$item" == "$PROJECT_PATH/$LIST_FILE" ]]; then
+        continue
+    fi
+    
+    # Control if item is whitelisted
+    is_in_list=false
+    for file_to_keep in "${keep_files[@]}"; do
+        if [[ "$item" == "$file_to_keep" ]]; then
+            is_in_list=true
+            break
+        fi
+    done
+    
+    # Il item is NOT whitelisted, clean it
+    if [[ "$is_in_list" == false ]]; then
+        echo "Cleaning: $item"
+        rm -rf "$item"
+    fi
+done
+
+echo ""
+echo "Cleaning completed! 🎉"
+```
+
+Stay safe boys, ```Cleaning completed! 🎉``` can easily turn into ```System destroyed! 🎉```.
+
+## 
+
+
