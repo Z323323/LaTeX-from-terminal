@@ -236,3 +236,11 @@ Complete build completed! 🎉
 
 And the game is basically done :). Now, if you need to restore initial project you'll just need to run ```sudo bash /home/???/my_utils/generics/restore_initial_project_tree_list.sh```. If you change the content of any file inside the project and need a fast compilation you can easily run ```sudo bash /home/???/my_utils/latex/fast_build.sh```.
 
+## Conclusions
+
+Using this solution you can use ```gedit``` and ```evince``` to obtain a really similar experience to Overleaf one (if not better). The only problem is real-time rendering of formulas which can be addressed following [https://latexeditor.lagrida.com/]. Once you do this the workflow simply becomes:
+
+- Open some ```.tex``` file running ```gedit file.tex```. Edit, then save.
+- If you need to edit some complex formula just open [https://latexeditor.lagrida.com/], then copy paste into ```gedit```.
+- If you need to build follow the previous instructions. I suggest to append the ```evince main.pdf``` script in order to make the process even faster. Then, to obtain a quick result you'll just need to run ```sudo bash /home/???/my_utils/latex/fast_build.sh && gedit main.pdf```.
+
