@@ -37,7 +37,7 @@ find "$PROJECT_PATH" -mindepth 1 -type f -o -type d > "$PROJECT_PATH/initial_pro
 echo "Complete list of all files and directories created in initial_project_tree_list.txt."
 ```
 
-Now, the second one is the one which is really **dangerous**.
+Now, the second one (```restore_initial_project.sh```) is the one which is really **dangerous**.
 
 **WARNING**: If you run this script inside the wrong folder, say ```/``` **you will delete your whole system** (except your whitelist :'''D, this would be quite funny ngl). If you run this script with the wrong ```initial_project_tree_list.txt``` **you will delete your whole project** (this one actually happened to me because I run the previous one in the wrong folder and then moved the file into another project). As I already told you this script deletes all the files which are not contained into the whitelist file. Code below.
 
@@ -117,7 +117,7 @@ $ENV{PYTHONPATH} = "/usr/lib/python3.10:/usr/lib/python3.10/lib-dynload:/home/??
 $pdflatex = 'pdflatex -synctex=1 -interaction=nonstopmode -shell-escape --shell-escape';
 ```
 
-Not sure if the last line is actually helpful but the solution works so just leave it there, it won't cause problems. The actual important details are the environment variables defined above. These look quite strange and it's because they are defined by the LaTeX engine using the Perl engine. These are the solution to every problem because in order to execute ```pygmentize``` LaTeX must find the executable, and in turn, ```pygmentize``` must find other dependencies (```pygments```). If you add the paths showed above to your system's environment variables, the LaTeX engine won't see them because for some arcane reason the LaTeX engine has its own (Perl based) environment variables and doesn't see any other environment variable. When the engine executes ```pygmentize``` through ```-shell-escape``` it won't see its path unless you specifically list it under its environment variables, and also, ```pygmentize``` won't see ```PYTHONPATH``` variables defined through your system because the script is executed in the "context" of the LaTeX engine and so you'll have to add ```PYTHONPATH``` too. The above solution should work for you too, but I suggest to check "```PYTHONPATH```" by running ```python3 -c "import sys; import pprint; pprint.pprint(sys.path)"```, and the correct directories manually.
+Not sure if the last line is actually helpful but the solution works so just leave it there, it won't cause problems. The actual important details are the environment variables defined above. These look quite strange and it's because they are defined by the LaTeX engine using the Perl engine. These are the solution to every problem because in order to execute ```pygmentize``` LaTeX must find the executable, and in turn, ```pygmentize``` must find other dependencies (```pygments```). If you add the paths showed above to your system's environment variables, the LaTeX engine won't see them because for some arcane reason the LaTeX engine has its own (Perl based) environment variables and doesn't see any other environment variable. When the engine executes ```pygmentize``` through ```-shell-escape``` it won't see its path unless you specifically list it under its environment variables, and also, ```pygmentize``` won't see ```PYTHONPATH``` variables defined through your system because the script is executed in the "context" of the LaTeX engine and so you'll have to add ```PYTHONPATH``` too. The above solution should work for you too, but I suggest to check "```PYTHONPATH```" by running ```python3 -c "import sys; import pprint; pprint.pprint(sys.path)"```, and import the correct directories manually.
 
 Now that we have ```.latexmkrc``` correctly configured we just need to setup a bash script to run every single script needed to compile our final ```pdf```. In order to build as fast as possibile I created two different scripts: one to compile from scratch (with index and bibliography), and one to compile modifications to existing (.tex) files in the fastest way (once we have the index and bibliography correctly compiled we'll just need to modify .tex files and compile quickly). Below the code for the complete build process (```complete_build.sh```) and the code for the fast build process (```fast_build.sh```).
 
@@ -156,7 +156,83 @@ latexmk -pdf -synctex=1 -interaction=nonstopmode -shell-escape "$PROJECT_PATH/ma
 echo "Complete build completed! 🎉"
 ```
 
+I suggest to put both under ```/home/???/my_utils/latex``` in order to keep everything well structured.
 
+## Workflow example
 
+I give you a not-biased/real-life example on my project since I need to start working under ```MyProjectDemo``` which I used to perform tests, but now should actually become my final solution. I head to the project (```TesiDemo```). Since I used it to perform tests it's already full of aux files and also contains the ```initial_project_tree_list.txt```. I need to: change the name of the directory to ```Tesi_737430```, restore initial contents, delete the file ```initial_project_tree_list.txt``` to ensure the new name of the folder matches (otherwise I will delete my whole project once I use ```restore_initial_project.sh```), rebuild ```initial_project_tree_list.txt``` using ```generate_initial_project_tree_list.sh```, then run ```complete_build.sh``` and the game is basically done.
 
+```shell
+[15ms][~]$ cd TesiDemo/
+[12ms][~/TesiDemo]$ ls
+bibliography.bib               main.aux          main.fls      main.synctex.gz
+Capitoli                       main.bbl          main.log      main.tex
+Frontespizio.tex               main.bcf          main.out      main.toc
+Immagini                       main.blg          main.pdf      _minted-main
+initial_project_tree_list.txt  main.fdb_latexmk  main.run.xml  Premessa.tex
+```
+```shell
+[~/TesiDemo]$ sudo bash /home/z561/my_utils/generics/restore_initial_project.sh
+[sudo] password di z561: 
+Cleaning: /home/z561/TesiDemo/main.log
+Cleaning: /home/z561/TesiDemo/main.fdb_latexmk
+Cleaning: /home/z561/TesiDemo/main.pdf
+Cleaning: /home/z561/TesiDemo/main.out
+Cleaning: /home/z561/TesiDemo/main.synctex.gz
+Cleaning: /home/z561/TesiDemo/main.bcf
+Cleaning: /home/z561/TesiDemo/main.aux
+Cleaning: /home/z561/TesiDemo/main.blg
+Cleaning: /home/z561/TesiDemo/main.toc
+Cleaning: /home/z561/TesiDemo/main.run.xml
+Cleaning: /home/z561/TesiDemo/main.fls
+Cleaning: /home/z561/TesiDemo/_minted-main
+Cleaning: /home/z561/TesiDemo/_minted-main/A60E08F32956786060F43CC61DBD4108EB55876F488A0BD644F456A7D3CBFF59.pygtex
+Cleaning: /home/z561/TesiDemo/_minted-main/default.pygstyle
+Cleaning: /home/z561/TesiDemo/_minted-main/458CB55396AC8D86A35D606090C63CA8EB55876F488A0BD644F456A7D3CBFF59.pygtex
+Cleaning: /home/z561/TesiDemo/_minted-main/1DF93988F6018771B81C99337B2B72B05018845A16FEE2F871CFA2D2B2CFB1C6.pygtex
+Cleaning: /home/z561/TesiDemo/main.bbl
+
+Cleaning completed! 🎉
+```
+```shell
+[2,429s][~/TesiDemo]$ ls
+bibliography.bib  Frontespizio.tex  initial_project_tree_list.txt  Premessa.tex
+Capitoli          Immagini          main.tex
+```
+[ Here I renamed dir name from GUI ]
+```shell
+[16ms][~/Tesi_737430]$ rm initial_project_tree_list.txt                 
+rm: rimuovere il file regolare protetto dalla scrittura 'initial_project_tree_list.txt'? s
+```
+```shell
+[15ms][~/Tesi_737430]$ sudo bash /home/z561/my_utils/generics/generate_initial_project_tree_list.sh 
+[sudo] password di z561: 
+Complete list of all files and directories created in initial_project_tree_list.txt.
+[2,373s][~/Tesi_737430]$ cat initial_project_tree_list.txt              
+/home/z561/Tesi_737430/Immagini
+/home/z561/Tesi_737430/Immagini/Quadranti.svg.png
+/home/z561/Tesi_737430/Immagini/R.png
+/home/z561/Tesi_737430/Immagini/15gon.jpg
+/home/z561/Tesi_737430/Immagini/Logo_Insubria.png
+/home/z561/Tesi_737430/Frontespizio.tex
+/home/z561/Tesi_737430/Capitoli
+/home/z561/Tesi_737430/Capitoli/Campi_di_Galois.tex
+/home/z561/Tesi_737430/Capitoli/Bibliografia.tex
+/home/z561/Tesi_737430/Capitoli/Conclusione.tex
+/home/z561/Tesi_737430/Capitoli/Introduzione.tex
+/home/z561/Tesi_737430/Capitoli/Gruppi_moltiplicativi.tex
+/home/z561/Tesi_737430/Capitoli/Gruppi_additivi.tex
+/home/z561/Tesi_737430/initial_project_tree_list.txt
+/home/z561/Tesi_737430/.latexmkrc
+/home/z561/Tesi_737430/bibliography.bib
+/home/z561/Tesi_737430/main.tex
+/home/z561/Tesi_737430/Premessa.tex
+```
+```shell
+sudo bash /home/z561/my_utils/latex/complete_build.sh
+[ Whole output redacted ]
+Complete build completed! 🎉
+```
+
+And the game is basically done :). Now, if you need to restore initial project you'll just need to run ```sudo bash /home/???/my_utils/generics/restore_initial_project_tree_list.sh```. If you change the content of any file inside the project and need a fast compilation you can easily run ```sudo bash /home/???/my_utils/latex/fast_build.sh```.
 
