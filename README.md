@@ -242,5 +242,5 @@ Using this solution you can use ```gedit``` and ```evince``` to obtain a really 
 
 - Open some ```.tex``` file running ```gedit file.tex```. Edit, then save.
 - If you need to edit some complex formula just open [https://latexeditor.lagrida.com/], then copy paste into ```gedit```.
-- If you need to build follow the previous instructions. I suggest to append the ```evince main.pdf``` script in order to make the process even faster. Then, to obtain a quick result you'll just need to run ```sudo bash /home/???/my_utils/latex/fast_build.sh && gedit main.pdf```.
+- If you need to build follow the previous instructions. I suggest to append the ```evince main.pdf``` script in order to make the process even faster. Then, to obtain a quick result you'll just need to run ```sudo bash /home/???/my_utils/latex/fast_build.sh && evince main.pdf```.
 
